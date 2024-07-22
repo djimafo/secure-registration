@@ -45,6 +45,6 @@ public class SecurityConfiguration {
                         .authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class); //juste pour placer le filtre jwtAuthFilter avant les filtre de sprigboot et avant celuis de UsernamePasswordAuthenticationFilter.class
     }
 }
