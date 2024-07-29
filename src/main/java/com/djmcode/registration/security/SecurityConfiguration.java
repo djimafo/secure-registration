@@ -1,6 +1,6 @@
 package com.djmcode.registration.security;
 
-import com.djmcode.registration.service.JwtAuthFilter;
+import com.djmcode.registration.service.jwt.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,7 +30,7 @@ public class SecurityConfiguration
             .cors(Customizer.withDefaults())
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(req -> req.requestMatchers(
-                                                     "/ath/**",
+                                                     "/auth/**",
                                                      "/v2/api-docs",
                                                      "/v3/api-docs",
                                                      "/v3/api-docs/**",

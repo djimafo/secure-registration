@@ -1,4 +1,4 @@
-package com.djmcode.registration.service;
+package com.djmcode.registration.service.jwt;
 
 import com.djmcode.registration.entitie.User;
 import com.djmcode.registration.repo.UserRepository;

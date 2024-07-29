@@ -34,3 +34,5 @@ application:
   security:
     secretKey: "4621994adf34c2da74b8e430d719fe3f8fcd5f618dd3e619f786c18923ac8bc0"
     jwtExpiration:  1440000
+  mailding:
+    activation_url: http://localhost:8181/api/v1/auth/registration/confirmation

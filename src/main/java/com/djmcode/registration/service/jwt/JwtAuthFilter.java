@@ -1,4 +1,4 @@
-package com.djmcode.registration.service;
+package com.djmcode.registration.service.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -22,7 +22,7 @@ import java.io.IOException;
 public class JwtAuthFilter extends OncePerRequestFilter
 {
   private final JwtService jwtService;
-  private UserDetailsService userDetailsService;
+  private final UserDetailsService userDetailsService;
 
   @Override
   protected void doFilterInternal(

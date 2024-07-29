@@ -1,4 +1,4 @@
-package com.djmcode.registration.service;
+package com.djmcode.registration.service.jwt;
 
 import java.security.Key;
 import java.util.Date;
