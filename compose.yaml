@@ -2,9 +2,9 @@ services:
   postgres:
     image: 'postgres:13'
     environment:
-      - 'POSTGRES_DB=registration'
-      - 'POSTGRES_USER=root'
-      - 'POSTGRES_PASSWORD=password'
+      POSTGRES_DB: registration
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
     ports:
       - '5432:5432'
 

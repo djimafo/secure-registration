@@ -2,6 +2,7 @@ package com.djmcode.registration.service.auth;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 
 import com.djmcode.registration.entitie.Token;
@@ -11,9 +12,12 @@ import com.djmcode.registration.repo.TokenRepository;
 import com.djmcode.registration.repo.UserRepository;
 import com.djmcode.registration.service.email.EmailService;
 import com.djmcode.registration.service.email.EmailTemplateName;
+import com.djmcode.registration.service.jwt.JwtService;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +30,8 @@ public class AuthentificationServiceImpl implements AuthentificationService
   private final UserRepository userRepository;
   private final TokenRepository tokenRepository;
   private final EmailService emailService;
+  private final AuthenticationManager authenticationManager;
+  private final JwtService jwtService;
 
   @Value("${application.mailding.activation_url}")
   private String activationUrl;
@@ -48,6 +54,35 @@ public class AuthentificationServiceImpl implements AuthentificationService
     sendActivationEmail(user);
   }
 
+  @Override
+  public AuthResponse authentication(AuthRequest request)
+  {
+    var authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+    var user = ((User) authenticate.getPrincipal());
+    var claims = new HashMap<String, Object>();
+    claims.put("fullName", user.getFullName());
+    String jwToken = jwtService.generateToken(claims,user);
+
+ return  AuthResponse.builder()
+         .token(jwToken).build();
+  }
+
+  @Override
+  public void activateAccount(String activateToken) throws MessagingException
+  {
+    Token token =  tokenRepository.findByToken(activateToken).orElseThrow(() -> new IllegalStateException("Token not found in Table Token"));
+    if (LocalDateTime.now().isAfter(token.getExpireTime())){
+      sendActivationEmail(token.getUser());
+      throw new IllegalStateException("Token is expired, A new token has been send to "+ token.getUser().getEmail());
+    }
+
+    User user = token.getUser();
+    user.setEnabled(true);
+    userRepository.save(user);
+    token.setValidateAt(LocalDateTime.now());
+    tokenRepository.save(token);
+  }
+
   private void sendActivationEmail(User user) throws MessagingException
   {
     var activationtCode = genrateActivationCode(6);
@@ -62,6 +97,7 @@ public class AuthentificationServiceImpl implements AuthentificationService
 
     String email = user.getEmail();
     String firstname = user.getFirstname();
+    activationUrl=activationUrl+"?token="+activationtCode;
     emailService.sendConfirmationMail(email, firstname, "Account Activation", EmailTemplateName.ACTIVATE_ACCOUNT, activationUrl, activationtCode);
 
   }

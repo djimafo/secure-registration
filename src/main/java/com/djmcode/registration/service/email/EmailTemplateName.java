@@ -6,7 +6,7 @@ import lombok.Getter;
 public enum EmailTemplateName
 {
   ACTIVATE_ACCOUNT("activate_account")
-  ;
+  ; // template name
 
   private final String name;
 
